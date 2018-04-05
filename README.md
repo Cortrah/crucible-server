@@ -1,9 +1,9 @@
 # crucible-server
 
-A hapi based server for 
+### A hapi based server for 
 https://github.com/Cortrah/Waypoint-Crucible
 
-references
+##### references
 
 https://github.com/hapijs/hapi
 
@@ -24,3 +24,17 @@ https://github.com/devinivy/schmervice
 https://github.com/hapijs/joi/blob/master/API.md
 
 https://github.com/devinivy/toys
+
+
+hpal usage example
+
+    npx hpal make route gogo-gadget
+    
+To run the server
+
+    npm start
+    
+To visit a route    
+
+http://localhost:3000/random-name
+
