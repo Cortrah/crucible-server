@@ -26,15 +26,15 @@ https://github.com/hapijs/joi/blob/master/API.md
 https://github.com/devinivy/toys
 
 
-hpal usage example
+#### hpal usage example
 
     npx hpal make route gogo-gadget
     
-To run the server
+#### To run the server
 
     npm start
     
-To visit a route    
+#### To visit a route    
 
 http://localhost:3000/random-name
 
