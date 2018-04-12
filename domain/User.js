@@ -6,7 +6,7 @@ let defaults = {
     email: '',
     password: '',
     playerId: 7,
-}
+};
 
 export default class User {
 

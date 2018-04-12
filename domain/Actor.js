@@ -1,5 +1,5 @@
 let defaults = {
-    id: 0,
+    id: null,
     name:"?",
     team:"Bad Guys",
     controller:"AI",
