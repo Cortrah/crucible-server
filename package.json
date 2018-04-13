@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "The server part of a simple card game kata, using hapi and playing with hpal",
   "author": "Cortlandt Winters",
+  "repository": "https://github.com/Cortrah/crucible-server.git",
   "license": "ISC",
   "main": "lib/index.js",
   "directories": {

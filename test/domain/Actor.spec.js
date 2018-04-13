@@ -1,8 +1,28 @@
-const Actor  = require('/domain/Actor.js');
+'use strict';
 
-describe('Deployment', () => {
+const Lab = require('lab');
+const Assert = require('assert');
+const lab = exports.lab = Lab.script();
 
-    it('registers the main plugin.', async () => {
-        expect(true).to.equal(true);
+const Actor = require('/domain/Actor.js');
+
+lab.experiment('test an Actor', (done) => {
+
+    lab.test('- it creates an actor with expected defaults', (done) => {
+
+        const options = {
+            method: 'POST',
+            url: '/api/register-user'
+        };
+
+        client.inject( options, (res) => {
+
+            Assert(res.statusCode === 200);
+            let response = JSON.parse(res.payload);
+
+            Assert(true === true);
+            done();
+        });
     });
+
 });
