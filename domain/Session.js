@@ -1,15 +1,15 @@
-let defaults = {
+const defaults = {
     signedIn: false,
     authHeader: '',
     sessionId: '',
-    sessionKey: '',
-}
+    sessionKey: ''
+};
 
 export default class Session {
 
     constructor( options ) {
 
-        if(options != null) {
+        if (options !== null) {
             this.signedIn = options.signedIn || defaults.signedIn;
             this.authHeader = options.authHeader || defaults.authHeader;
             this.sessionId = options.sessionId || defaults.sessionId;

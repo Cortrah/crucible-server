@@ -1,4 +1,4 @@
-import Profile from '/domain/Profile.js';
+import Profile from '../../domain/Profile.js';
 
 describe('Profile', () => {
     it('Has expected default values', () => {

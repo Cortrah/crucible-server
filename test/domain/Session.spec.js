@@ -1,4 +1,4 @@
-import Session from '/domain/Session.js';
+import Session from '../../domain/Session.js';
 
 describe('Session', () => {
     it('Has expected default values', () => {

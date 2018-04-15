@@ -2,10 +2,10 @@ import Session from './Session';
 import Profile from './Profile';
 import Actor from './Actor';
 
-let defaults = {
+const defaults = {
     email: '',
     password: '',
-    playerId: 7,
+    playerId: 7
 };
 
 export default class User {
@@ -16,7 +16,7 @@ export default class User {
         let profile = new Profile();
         let actor = new Actor();
 
-        if(options != null) {
+        if (options !== null) {
             this.email = options.email || defaults.email;
             this.password = options.password || defaults.password;
             this.playerId = options.playerId || defaults.playerId;

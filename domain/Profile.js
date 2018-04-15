@@ -1,18 +1,18 @@
-let defaults = {
-    name: "Gogo Gadget",
+const defaults = {
+    name: 'Gogo Gadget',
     botChecked: false,
     ipAddress: 'https://123.122.1.2',
     port: '8000',
-    token:"change me",
-    selDog: "../static/dog1.png",
-    selBot: '../static/robot1.png',
+    token:'change me',
+    selDog: '../static/dog1.png',
+    selBot: '../static/robot1.png'
 }
 
 export default class ProfileData {
 
     constructor( options ) {
 
-        if(options != null) {
+        if (options !== null) {
             this.name = options.name || defaults.name;
             this.botChecked = options.botChecked || defaults.botChecked;
             this.ipAddress = options.ipAddress || defaults.ipAddress;

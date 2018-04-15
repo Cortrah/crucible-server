@@ -1,4 +1,4 @@
-const Actor  = require('/domain/Actor.js');
+import Actor from '../../domain/Actor.js';
 
 describe('Deployment', () => {
 
