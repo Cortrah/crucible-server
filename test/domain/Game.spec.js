@@ -1,4 +1,4 @@
-import Actor from '../../domain/Actor.js';
+import Game from '../../domain/Game.js';
 
 const Code = require('code');
 const Lab = require('lab');
@@ -6,11 +6,11 @@ const Lab = require('lab');
 const { describe, it } = exports.lab = Lab.script();
 const { expect } = Code;
 
-describe('Actor', () => {
+describe('Game', () => {
     it('Has expected default values', () => {
-        const defaultActor = new Actor();
+        const defaultGame = new Game();
 
         expect(true)
-            .to.exist(defaultActor);
+            .to.exist(defaultGame);
     });
 });

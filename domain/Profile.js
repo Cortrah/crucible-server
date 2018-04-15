@@ -6,7 +6,7 @@ const defaults = {
     token:'change me',
     selDog: '../static/dog1.png',
     selBot: '../static/robot1.png'
-}
+};
 
 export default class ProfileData {
 
