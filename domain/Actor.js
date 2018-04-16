@@ -43,4 +43,16 @@ export default class Actor {
             Object.assign(this, defaults);
         }
     }
+
+    drawMistle(){
+    }
+
+    drawShield(){
+    }
+
+    selectCard(){
+    }
+
+    targetActor(){
+    }
 }

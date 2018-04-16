@@ -4,7 +4,7 @@ export default class Game {
 
     constructor() {
         this.id = 0;
-        this.title = 'Waypoint Crucible Game X';
+        this.name = 'Waypoint Crucible Game X';
         this.status = 'PREPARING';
         this.winner = '';
         this.rules = {
@@ -28,7 +28,7 @@ export default class Game {
             this.actors.push(new Actor());
             this.actors[i].id = i;
             this.actors[i].avatarImg = this.randomRobot();
-            if (i >= this.actorCount / 2 ){
+            if (i >= this.actorCount / 2){
                 this.actors[i].team = 'Good Guys';
             }
         }
@@ -38,8 +38,45 @@ export default class Game {
         this.timeRunning = 0;
     }
 
+    init(){
+        const options = { optionA: 'A', optionB: 'B' };
+        this.addEventListener('start-game',this.startGame, options);
+        this.removeEventListener('start-game',this.startGame);
+    }
+
+    startGame(options){
+        console.log(options);
+    }
+
+    endGame(){
+    }
+
+    gameTick(){
+    }
+
+    manaTick(){
+    }
+
+    mistleDrawn(){
+    }
+
+    shieldDrawn(){
+    }
+
+    cardSelected(){
+    }
+
+    actorTargeted(){
+    }
+
+    mistleImpacted(){
+    }
+
+    shieldUp(){
+    }
+
     randomRobot(){
         const randomIndex = Math.round(Math.random() * 4);
-        return '../static/robot' + randomIndex + '.png'
+        return '../static/robot' + randomIndex + '.png';
     }
 }
