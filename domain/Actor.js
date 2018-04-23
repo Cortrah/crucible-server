@@ -1,5 +1,8 @@
+import Bus from './Bus';
+
 const defaults = {
     id: null,
+    bus: null,
     name:'?',
     team:'Bad Guys',
     controller:'AI',
@@ -24,6 +27,7 @@ export default class Actor {
         if (typeof options !== 'undefined'){
             this.id = options.id || defaults.id; //get randomId or use index
             this.name = options.name || defaults.name;
+            this.bus = options.bus || new Bus();
             this.team = options.team || defaults.team;
             this.controller = options.controller || defaults.controller;
             this.avatarImg = options.avatarImg || defaults.avatarImg;
@@ -45,14 +49,59 @@ export default class Actor {
     }
 
     drawMistle(){
+        const data = {};
+        let myself = this.game.actors[this.user.playerId];
+        if(myself.isActive && this.game.status === "PLAYING"){
+            if(myself.cards.length < 5 && myself.deckSize > 0){
+                this.$bus.$emit("draw-mistle", this.user.playerId);
+                //this.$store.dispatch({ type: 'drawMistle', actorId: actorId});
+            }
+        }
+        this.bus.dispatch('draw-mistle', data);
     }
 
     drawShield(){
+        const data = {};
+        let myself = this.game.actors[this.user.playerId];
+        if(myself.isActive && this.game.status === "PLAYING"){
+            if(myself.cards.length < 5 && myself.deckSize > 0) {
+                this.$bus.$emit("draw-shield", this.user.playerId);
+                //this.$store.dispatch({ type: 'drawShield', actorId: actorId});
+            }
+        }
+        this.bus.dispatch('draw-shield', data);
     }
 
     selectCard(){
+        const data = {};
+        let myself = this.game.actors[this.user.playerId];
+        if(myself.isActive && this.game.status === "PLAYING"){
+            this.$bus.$emit("select-card", this.user.playerId, cardIndex);
+            //this.$store.dispatch({ type: 'selectCard', actorId:actorId, cardIndex:cardIndex});
+        }
+        this.bus.dispatch('select-card', data);
     }
 
     targetActor(){
+        const data = {};
+        // if no store.user.actorId == null and game.status === "Preparing"
+        // then we are setting a slot to a player instead of a bot
+        // (if there is an actorId there should be a way to leave a spot by setting it back to null)
+        if ((this.user.playerId == null) && (this.game.status === "Preparing")){
+            this.$bus.$emit("sit-at-table", targetId);
+        }
+
+        let myself = this.game.actors[this.user.playerId];
+        let cardIndex = myself.selectedCardIndex;
+        if(myself.isActive && this.game.status === "PLAYING"){
+            this.$bus.$emit("target-actor", this.user.playerId, targetId, cardIndex);
+            // this.$store.dispatch({
+            //     type: 'targetActor',
+            //     sourceId:sourceId,
+            //     targetId:targetId,
+            //     cardIndex:cardIndex
+            // });
+        }
+        this.bus.dispatch('target-player', data);
     }
 }

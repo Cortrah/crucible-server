@@ -1,5 +1,4 @@
 {
-  "extends": "eslint-config-hapi",
   "parserOptions": {
       "ecmaVersion": 8,
       "sourceType": "module"
