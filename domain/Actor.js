@@ -1,9 +1,9 @@
-let defaults = {
+const defaults = {
     id: null,
-    name:"?",
-    team:"Bad Guys",
-    controller:"AI",
-    avatarImg:"../static/robot3.png",
+    name:'?',
+    team:'Bad Guys',
+    controller:'AI',
+    avatarImg:'../static/robot3.png',
     maxMana:0,
     mana:0,
     maxHealth:30,
@@ -21,7 +21,7 @@ let defaults = {
 export default class Actor {
 
     constructor(options) {
-        if(typeof options !== 'undefined'){
+        if (typeof options !== 'undefined'){
             this.id = options.id || defaults.id; //get randomId or use index
             this.name = options.name || defaults.name;
             this.team = options.team || defaults.team;
@@ -42,5 +42,17 @@ export default class Actor {
         } else {
             Object.assign(this, defaults);
         }
+    }
+
+    drawMistle(){
+    }
+
+    drawShield(){
+    }
+
+    selectCard(){
+    }
+
+    targetActor(){
     }
 }

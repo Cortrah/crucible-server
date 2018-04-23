@@ -1,12 +1,13 @@
-import Actor from './Actor'
+import Bus from './Bus';
+import Actor from './Actor';
 
 export default class Game {
 
     constructor() {
         this.id = 0;
-        this.title = 'Waypoint Crucible Game X';
-        this.status = "PREPARING";
-        this.winner = "";
+        this.name = 'Waypoint Crucible Game X';
+        this.status = 'PREPARING';
+        this.winner = '';
         this.rules = {
             maxMana:10,
             maxHealth:30,
@@ -20,26 +21,64 @@ export default class Game {
             bleedoutInterval:1000,
             flightTime:4000,
             shieldsUpTime:1000,
-            shieldDecayRate:1000,
-        }
+            shieldDecayRate:1000
+        };
         this.actorCount = 10;
         this.actors = [];
-        for(let i = 0; i < this.actorCount; i++){
+        for (let i = 0; i < this.actorCount; i++){
             this.actors.push(new Actor());
             this.actors[i].id = i;
             this.actors[i].avatarImg = this.randomRobot();
-            if (i >= this.actorCount/2){
-                this.actors[i].team = "Good Guys";
+            if (i >= this.actorCount / 2){
+                this.actors[i].team = 'Good Guys';
             }
         }
         this.mistles = [];
         this.shields = [];
         this.timeStarted = 0;
         this.timeRunning = 0;
+        this.bus = new Bus();
+        this.init();
+    }
+
+    init(){
+        const options = { optionA: 'A', optionB: 'B' };
+        this.controller.on('start-game',this.startGame, options);
+    }
+
+    startGame(options){
+        console.log(options);
+    }
+
+    endGame(){
+    }
+
+    gameTick(){
+    }
+
+    manaTick(){
+    }
+
+    mistleDrawn(){
+    }
+
+    shieldDrawn(){
+    }
+
+    cardSelected(){
+    }
+
+    actorTargeted(){
+    }
+
+    mistleImpacted(){
+    }
+
+    shieldUp(){
     }
 
     randomRobot(){
         const randomIndex = Math.round(Math.random() * 4);
-        return "../static/robot" + randomIndex + ".png"
+        return '../static/robot' + randomIndex + '.png';
     }
 }
