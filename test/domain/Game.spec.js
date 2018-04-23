@@ -12,7 +12,6 @@ describe('Game', () => {
 
         const defaultGame = new Game();
 
-        defaultGame.init();
         defaultGame.dispatch('start-game',{ gogo: 'gadget' });
 
         expect(true)

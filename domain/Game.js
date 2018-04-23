@@ -1,3 +1,4 @@
+import Bus from './Bus';
 import Actor from './Actor';
 
 export default class Game {
@@ -36,12 +37,13 @@ export default class Game {
         this.shields = [];
         this.timeStarted = 0;
         this.timeRunning = 0;
+        this.bus = new Bus();
+        this.init();
     }
 
     init(){
         const options = { optionA: 'A', optionB: 'B' };
-        this.addEventListener('start-game',this.startGame, options);
-        this.removeEventListener('start-game',this.startGame);
+        this.controller.on('start-game',this.startGame, options);
     }
 
     startGame(options){
