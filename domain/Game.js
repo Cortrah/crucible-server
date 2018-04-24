@@ -1,15 +1,15 @@
 'use strict';
 
-const Bus = require('./Bus');
 const Actor = require('./Actor');
-
-const uuid = require('uuid');
+const Que = require('p-queue');
+const Uuid = require('uuid');
+const got = require('got');
 
 module.exports = class Game {
 
     constructor(options) {
-        this.id = uuid.v4();
-        this.bus = new Bus();
+        this.id = Uuid.v4();
+        this.que = new Que({concurrency: 1});
         this.store = {
             name:'Waypoint Crucible Game X',
             status:'PREPARING',
@@ -45,6 +45,7 @@ module.exports = class Game {
             if (i >= this.actorCount / 2) {
                 team = 'Good Guys';
             }
+            // ToDo: figure out why require constructor doesn't get arguments
             let newActor = new Actor();
             newActor.id = i;
             newActor.bus = this.bus;
@@ -52,7 +53,6 @@ module.exports = class Game {
             newActor.avatarImg = avatarImg;
             this.store.actors.push(newActor);
         }
-        console.log(this.store.actors);
         this.created();
     }
 
@@ -89,9 +89,15 @@ module.exports = class Game {
         //         _self.eventSwitch(eventName, data);
         //     });
         // });
-
+        console.log('created called');
         const data = { type: 'startGame', otherStuff: 'gogo gadget' };
-        this.bus.on('start-game',this.store, data);
+        //this.que.add('start-game',this.store, data);
+
+        this.que.add(() => got('agnostechvalley.com')).then(() => {
+            console.log('Done: agnostechvalley.com');
+        });
+
+        //this.bus.dispatch('start-game',this.store, data);
 
         // this.bus.on('draw-mistle',this.store, data);
         // this.bus.on('draw-shield',this.store, data);
@@ -110,7 +116,8 @@ module.exports = class Game {
     }
 
     startGame(state, data) {
-        this.gameIntervalId = setInterval(this.gameTick, this.rules.gameTickInterval);
+        console.log('startGame called');
+        this.store.gameIntervalId = setInterval(this.gameTick, this.rules.gameTickInterval);
         let scope = this;
         state.game.actors.forEach(function(actor){
             let remaining = actor.deck.length;
@@ -146,10 +153,12 @@ module.exports = class Game {
             if(actor.deck.length <= 0 && actor.cards.length === 0 && actor.isActive){
                 actor.health--;
             }
-        })
+        });
+        this.endGame(this.store)
     }
 
     endGame(state, data) {
+        console.log("end-game");
         state.game.status = "OVER";
     }
 

@@ -17,8 +17,10 @@
   },
   "dependencies": {
     "boom": "7.x.x",
+    "got": "^8.3.0",
     "haute-couture": "3.x.x",
     "joi": "13.x.x",
+    "p-queue": "^2.4.1",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
