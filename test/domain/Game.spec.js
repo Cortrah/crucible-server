@@ -10,10 +10,9 @@ describe('Game', () => {
 
     it('Has expected default values', async () => {
 
-        //const defaultGame = await new Game();
-        //defaultGame.dispatch('start-game',{ gogo: 'gadget' });
+        const defaultGame = await new Game();
+        //defaultGame.bus.dispatch('start-game',{ gogo: 'gadget' });
 
-        expect(true).to.equal(true);
-        //expect(defaultGame).to.exist();
+        expect(defaultGame).to.exist();
     });
 });

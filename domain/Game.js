@@ -1,125 +1,116 @@
 const Bus = require('./Bus');
 const Actor = require('./Actor');
 
-const defaults = {
-    id: null,
-    bus: null,
-    name:'Waypoint Crucible Game X',
-    status: 'PREPARING',
-    winner: '',
-    rules: {
-        maxMana: 10,
-        maxHealth: 30,
-        startingDeck: [0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 7, 8],
-        startingHandSize: 0,
-        maxCards: 5,
-        manaGrowthInterval: 1000,
-        manaReplentishInterval: 1000,
-        drawInterval: 1000,
-        fireInterval: 500,
-        bleedoutInterval: 1000,
-        flightTime: 4000,
-        shieldsUpTime: 1000,
-        shieldDecayRate: 1000
-    },
-    actorCount: 10,
-    actors: [],
-    mistles: [],
-    shields: [],
-    gameIntervalId: {},
-    manaIntervalId: {},
-    timeStarted: 0,
-    timeRunning: 0,
-};
-
-// ----------------------------------------------------
-// game events
-// ----------------------------------------------------
-// host only
-// 'start-game' table.game
-//
-// server events for actors, client events for players
-// 'draw-mistle' gameId actorId
-// 'draw-shield' gameId  actorId
-// 'select-card' gameId  actorId cardIndex
-// 'target-actor' gameId  sourceId targetId cardIndex
-let gameEvents = [
-    'start-game',
-    'draw-mistle','draw-shield',
-    'select-card','target-actor',
-];
-
-// ----------------------------------------------
-// nes websocket always server initiated
-// ----------------------------------------------
-// 'mana-tick',
-// 'game-tick',
-// 'mistle-impact',
-// 'shield-up',
-// 'end-game'
-
-
 class Game {
 
     constructor(options) {
-
-        //if (typeof options !== 'undefined') {
-            this.id = 0;
-            this.bus = new Bus();
-            this.name = 'Waypoint Crucible Game X';
-            this.status = 'PREPARING';
-            this.winner = '';
-            this.rules = {
-                maxMana: 10,
-                maxHealth: 30,
-                startingDeck: [0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 7, 8],
-                startingHandSize: 0,
-                maxCards: 5,
-                manaGrowthInterval: 1000,
-                manaReplentishInterval: 1000,
-                drawInterval: 1000,
-                fireInterval: 500,
-                bleedoutInterval: 1000,
-                flightTime: 4000,
-                shieldsUpTime: 1000,
-                shieldDecayRate: 1000
-            };
-            this.actorCount = 10;
-            this.actors = [];
-            for (let i = 0; i < this.actorCount; i++) {
-                this.actors.push(new Actor(this.bus));
-                this.actors[i].id = i;
-                this.actors[i].avatarImg = this.randomRobotImg();
-                if (i >= this.actorCount / 2) {
-                    this.actors[i].team = 'Good Guys';
-                }
+        this.id = 0;
+        this.bus = new Bus();
+        this.store = {
+            name:'Waypoint Crucible Game X',
+            status:'PREPARING',
+            winner:'',
+            actors:[],
+            mistles:[],
+            shields:[],
+            gameIntervalId: null,
+            manaIntervalId: null,
+            timeStarted: 0,
+            timeRunning: 0,
+        };
+        this.rules = {
+            maxMana: 10,
+            maxHealth: 30,
+            startingDeck: [0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 7, 8],
+            startingHandSize: 0,
+            maxCards: 5,
+            gameTickInterval: 1000,
+            manaGrowthInterval: 1000,
+            manaReplentishInterval: 1000,
+            drawInterval: 1000,
+            fireInterval: 500,
+            bleedoutInterval: 1000,
+            flightTime: 4000,
+            shieldsUpTime: 1000,
+            shieldDecayRate: 1000
+        };
+        this.actorCount = 10;
+        for (let i = 0; i < this.actorCount; i++) {
+            let avatarImg =  this.randomRobotImg();
+            let team = "Bad Guys";
+            if (i >= this.actorCount / 2) {
+                team = 'Good Guys';
             }
-            this.mistles = [];
-            this.shields = [];
-            this.gameIntervalId = null;
-            this.manaIntervalId = null;
-            this.timeStarted = 0;
-            this.timeRunning = 0;
-            this.created();
-        //} else {
-        //    Object.assign(this, defaults);
-        //}
+            console.log('--------');
+            console.log(i);
+            console.log(this.bus);
+            console.log(team);
+            console.log(avatarImg);
+            let newActor = new Actor(i, this.bus, {
+                team: team,
+                avatarImg: avatarImg
+            });
+            console.log(newActor);
+            console.log(this.store.actors);
+            this.store.actors.push(newActor);
+        }
+        this.created();
     }
 
     created(){
-        const options = { optionA: 'A', optionB: 'B' };
-        this.bus.on('start-game',this.startGameOptions, options);
+        // ----------------------------------------------------
+        // game events
+        // ----------------------------------------------------
+        // host only
+        // 'start-game' table.game
+        //
+        // server events for actors, client events for players
+        // 'draw-mistle' gameId actorId
+        // 'draw-shield' gameId  actorId
+        // 'select-card' gameId  actorId cardIndex
+        // 'target-actor' gameId  sourceId targetId cardIndex
+        // let gameEvents = [
+        //     'start-game',
+        //     'draw-mistle','draw-shield',
+        //     'select-card','target-actor',
+        // ];
+
+        // ----------------------------------------------
+        // nes websocket always server initiated
+        // ----------------------------------------------
+        // 'mana-tick',
+        // 'game-tick',
+        // 'mistle-impact',
+        // 'shield-up',
+        // 'end-game'
+
+        // let _self = this;
+        // gameEvents.forEach(eventName => {
+        //     this.bus.on(eventName, function(data) {
+        //         _self.eventSwitch(eventName, data);
+        //     });
+        // });
+
+        const data = { type: 'startGame', otherStuff: 'gogo gadget' };
+        this.bus.on('start-game',this.store, data);
+
+        // this.bus.on('draw-mistle',this.store, data);
+        // this.bus.on('draw-shield',this.store, data);
+        // this.bus.on('select-card',this.store, data);
+        // this.bus.on('target-actor',this.store, data);
+        //
+        // this.bus.on('mana-tick',this.store, data);
+        // this.bus.on('game-tick',this.store, data);
+        // this.bus.on('mistle-impact',this.store, data);
+        // this.bus.on('shield-up',this.store, data);
+        // this.bus.on('end-game',this.store, data);
     }
 
     beforeDestroy(){
-        clearInterval(this.gameIntervalId);
+        clearInterval(this.store.gameIntervalId);
     }
 
-    startGameOptions(options){
-        console.log(options);
-    }
-
-    startGame(state, payload) {
+    startGame(state, data) {
         this.gameIntervalId = setInterval(this.gameTick, this.rules.gameTickInterval);
         let scope = this;
         state.game.actors.forEach(function(actor){
@@ -141,6 +132,7 @@ class Game {
 
     gameTick(){
         console.log("game-tick");
+        this.manaTick(this.store);
     }
 
     manaTick(state) {

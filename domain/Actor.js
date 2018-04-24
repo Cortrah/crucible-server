@@ -1,8 +1,4 @@
-const Bus = require('./Bus');
-
 const defaults = {
-    id: {},
-    bus: {},
     name:'?',
     team:'Bad Guys',
     controller:'AI',
@@ -23,12 +19,18 @@ const defaults = {
 
 class Actor {
 
-    constructor(options) {
+    constructor(id, bus, options) {
+
+        console.log(id);
+        console.log(bus);
+        console.log(options);
+
+        // required
+        this.id = id;
+        this.bus = bus;
 
         if (typeof options !== 'undefined'){
-            this.id = options.id || defaults.id; //get randomId or use index
             this.name = options.name || defaults.name;
-            this.bus = options.bus || new Bus();
             this.team = options.team || defaults.team;
             this.controller = options.controller || defaults.controller;
             this.avatarImg = options.avatarImg || defaults.avatarImg;
