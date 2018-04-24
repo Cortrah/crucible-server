@@ -1,5 +1,36 @@
-import Bus from './Bus';
-import Actor from './Actor';
+const Bus = require('./Bus');
+const Actor = require('./Actor');
+
+const defaults = {
+    id: null,
+    bus: null,
+    name:'Waypoint Crucible Game X',
+    status: 'PREPARING',
+    winner: '',
+    rules: {
+        maxMana: 10,
+        maxHealth: 30,
+        startingDeck: [0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 7, 8],
+        startingHandSize: 0,
+        maxCards: 5,
+        manaGrowthInterval: 1000,
+        manaReplentishInterval: 1000,
+        drawInterval: 1000,
+        fireInterval: 500,
+        bleedoutInterval: 1000,
+        flightTime: 4000,
+        shieldsUpTime: 1000,
+        shieldDecayRate: 1000
+    },
+    actorCount: 10,
+    actors: [],
+    mistles: [],
+    shields: [],
+    gameIntervalId: {},
+    manaIntervalId: {},
+    timeStarted: 0,
+    timeRunning: 0,
+};
 
 // ----------------------------------------------------
 // game events
@@ -28,46 +59,51 @@ let gameEvents = [
 // 'end-game'
 
 
-export default class Game {
+class Game {
 
-    constructor() {
-        this.id = 0;
-        this.bus = new Bus();
-        this.name = 'Waypoint Crucible Game X';
-        this.status = 'PREPARING';
-        this.winner = '';
-        this.rules = {
-            maxMana:10,
-            maxHealth:30,
-            startingDeck:[0,0,1,1,2,2,2,3,3,3,3,4,4,4,5,5,6,6,7,8],
-            startingHandSize:0,
-            maxCards:5,
-            manaGrowthInterval:1000,
-            manaReplentishInterval:1000,
-            drawInterval:1000,
-            fireInterval:500,
-            bleedoutInterval:1000,
-            flightTime:4000,
-            shieldsUpTime:1000,
-            shieldDecayRate:1000
-        };
-        this.actorCount = 10;
-        this.actors = [];
-        for (let i = 0; i < this.actorCount; i++){
-            this.actors.push(new Actor(this.bus));
-            this.actors[i].id = i;
-            this.actors[i].avatarImg = this.randomRobot();
-            if (i >= this.actorCount / 2){
-                this.actors[i].team = 'Good Guys';
+    constructor(options) {
+
+        //if (typeof options !== 'undefined') {
+            this.id = 0;
+            this.bus = new Bus();
+            this.name = 'Waypoint Crucible Game X';
+            this.status = 'PREPARING';
+            this.winner = '';
+            this.rules = {
+                maxMana: 10,
+                maxHealth: 30,
+                startingDeck: [0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 7, 8],
+                startingHandSize: 0,
+                maxCards: 5,
+                manaGrowthInterval: 1000,
+                manaReplentishInterval: 1000,
+                drawInterval: 1000,
+                fireInterval: 500,
+                bleedoutInterval: 1000,
+                flightTime: 4000,
+                shieldsUpTime: 1000,
+                shieldDecayRate: 1000
+            };
+            this.actorCount = 10;
+            this.actors = [];
+            for (let i = 0; i < this.actorCount; i++) {
+                this.actors.push(new Actor(this.bus));
+                this.actors[i].id = i;
+                this.actors[i].avatarImg = this.randomRobotImg();
+                if (i >= this.actorCount / 2) {
+                    this.actors[i].team = 'Good Guys';
+                }
             }
-        }
-        this.mistles = [];
-        this.shields = [];
-        this.gameIntervalId = null;
-        this.manaIntervalId = null;
-        this.timeStarted = 0;
-        this.timeRunning = 0;
-        this.created();
+            this.mistles = [];
+            this.shields = [];
+            this.gameIntervalId = null;
+            this.manaIntervalId = null;
+            this.timeStarted = 0;
+            this.timeRunning = 0;
+            this.created();
+        //} else {
+        //    Object.assign(this, defaults);
+        //}
     }
 
     created(){
@@ -122,12 +158,12 @@ export default class Game {
         })
     }
 
-    endGame(state, payload) {
+    endGame(state, data) {
         state.game.status = "OVER";
     }
 
-    mistleDrawn(state, payload){
-        let actor = state.game.actors[payload.actorId];
+    mistleDrawn(state, data){
+        let actor = state.game.actors[data.actorId];
         if(actor.mana >= 1 && actor.deck.length > 0) {
             let drawn = actor.deck[0];
             actor.cards.push({cardType:"MISTLE", value: drawn});
@@ -137,8 +173,8 @@ export default class Game {
         }
     }
 
-    shieldDrawn(state, payload){
-        let actor = state.game.actors[payload.actorId];
+    shieldDrawn(state, data){
+        let actor = state.game.actors[data.actorId];
         if(actor.mana >= 1 && actor.deck.length > 0) {
             let drawn = actor.deck[0];
             actor.cards.push({cardType:"SHIELD", value: drawn});
@@ -148,23 +184,23 @@ export default class Game {
         }
     }
 
-    cardSelected(state, payload){
-        let actor = state.game.actors[payload.actorId];
-        actor.selectedCardIndex = payload.cardIndex;
+    cardSelected(state, data){
+        let actor = state.game.actors[data.actorId];
+        actor.selectedCardIndex = data.cardIndex;
     }
 
-    actorTargeted(state, payload) {
-        let sourceActor = state.game.actors[payload.sourceId];
-        let targetActor = state.game.actors[payload.targetId];
-        let card = sourceActor.cards[payload.cardIndex];
+    actorTargeted(state, data) {
+        let sourceActor = state.game.actors[data.sourceId];
+        let targetActor = state.game.actors[data.targetId];
+        let card = sourceActor.cards[data.cardIndex];
         if(sourceActor.mana >= card.value){
             sourceActor.mana -= card.value;
             sourceActor.cards.splice(sourceActor.selectedCardIndex, 1);
             sourceActor.selectedCardIndex = -1;
             if(card.cardType === "MISTLE") {
-                state.game.mistles.push(payload.mistle);
+                state.game.mistles.push(data.mistle);
             } else if (card.cardType === "SHIELD"){
-                targetActor.shields.push(payload.shield);
+                targetActor.shields.push(data.shield);
             }
         }
     }
@@ -194,8 +230,10 @@ export default class Game {
         }
     }
 
-    randomRobot(){
+    randomRobotImg(){
         const randomIndex = Math.round(Math.random() * 4);
         return '../static/robot' + randomIndex + '.png';
     }
 }
+
+module.exports = Game;

@@ -1,7 +1,7 @@
 // some interesting options
 // https://stackoverflow.com/questions/15308371/custom-events-model-without-using-dom-events-in-javascript
 
-export default class Bus {
+class Bus {
 
     constructor() {
         this.events = {};
@@ -16,12 +16,14 @@ export default class Bus {
     dispatch(event, data) {
         const handlers = this.events[event];
 
-        if (!handlers || handlers.length < 1){
+        if (!handlers || handlers.length == 0){
             return;
+        } else {
+            [].forEach.call(handlers, (handler) => {
+                handler(data);
+            });
         }
-
-        [].forEach.call(handlers, (handler) => {
-            handler(data);
-        });
     }
 };
+
+module.exports = Bus;

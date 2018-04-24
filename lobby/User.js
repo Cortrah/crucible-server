@@ -1,6 +1,6 @@
-import Session from './Session';
-import Profile from './Profile';
-import Actor from './Actor';
+const Session = require( './Session');
+const Profile = require( './Profile');
+const Actor = require('./Actor');
 
 const defaults = {
     email: '',
@@ -8,7 +8,7 @@ const defaults = {
     playerId: 7
 };
 
-export default class User {
+class User {
 
     constructor( options ) {
 
@@ -32,3 +32,5 @@ export default class User {
         }
     }
 }
+
+module.exports = User;

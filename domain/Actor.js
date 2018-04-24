@@ -1,8 +1,8 @@
-import Bus from './Bus';
+const Bus = require('./Bus');
 
 const defaults = {
-    id: null,
-    bus: null,
+    id: {},
+    bus: {},
     name:'?',
     team:'Bad Guys',
     controller:'AI',
@@ -21,9 +21,10 @@ const defaults = {
     isActive:true
 };
 
-export default class Actor {
+class Actor {
 
     constructor(options) {
+
         if (typeof options !== 'undefined'){
             this.id = options.id || defaults.id; //get randomId or use index
             this.name = options.name || defaults.name;
@@ -49,6 +50,7 @@ export default class Actor {
     }
 
     drawMistle(){
+
         const data = {};
         let myself = this.game.actors[this.user.playerId];
         if(myself.isActive && this.game.status === "PLAYING"){
@@ -61,6 +63,7 @@ export default class Actor {
     }
 
     drawShield(){
+
         const data = {};
         let myself = this.game.actors[this.user.playerId];
         if(myself.isActive && this.game.status === "PLAYING"){
@@ -73,6 +76,7 @@ export default class Actor {
     }
 
     selectCard(){
+
         const data = {};
         let myself = this.game.actors[this.user.playerId];
         if(myself.isActive && this.game.status === "PLAYING"){
@@ -83,6 +87,7 @@ export default class Actor {
     }
 
     targetActor(){
+
         const data = {};
         // if no store.user.actorId == null and game.status === "Preparing"
         // then we are setting a slot to a player instead of a bot
@@ -105,3 +110,5 @@ export default class Actor {
         this.bus.dispatch('target-player', data);
     }
 }
+
+module.exports = Actor;

@@ -5,7 +5,7 @@ const defaults = {
     sessionKey: ''
 };
 
-export default class Session {
+class Session {
 
     constructor( options ) {
 
@@ -19,3 +19,5 @@ export default class Session {
         }
     }
 }
+
+module.exports = Session;

@@ -1,6 +1,6 @@
-import Game from './Game';
+const Game = require('./Game');
 
-export default class Table {
+class Table {
 
     constructor(options) {
 
@@ -10,3 +10,4 @@ export default class Table {
         }
     }
 }
+module.exports = Table;

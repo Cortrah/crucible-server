@@ -8,7 +8,7 @@ const defaults = {
     selBot: '../static/robot1.png'
 };
 
-export default class ProfileData {
+class Profile {
 
     constructor( options ) {
 
@@ -25,3 +25,5 @@ export default class ProfileData {
         }
     }
 }
+
+module.exports = Profile;
