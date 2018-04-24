@@ -2,7 +2,6 @@
 
 const Uuid = require('uuid');
 const Bus = require('./commands/Bus');
-
 const Actor = require('./Actor');
 
 module.exports = class Game {
@@ -10,6 +9,7 @@ module.exports = class Game {
     constructor(options) {
         this.id = Uuid.v4();
         this.bus = new Bus();
+
         this.store = {
             name:'Waypoint Crucible Game X',
             status:'PREPARING',
@@ -22,6 +22,30 @@ module.exports = class Game {
             timeStarted: 0,
             timeRunning: 0,
         };
+
+        // ----------------------------------------------------
+        // game events, host only
+        // ----------------------------------------------------
+        // 'start-game' table.game
+
+        // ----------------------------------------------------
+        // server events for actors, client events for players
+        // ----------------------------------------------------
+        // 'draw-mistle' gameId actorId
+        // 'draw-shield' gameId  actorId
+        // 'select-card' gameId  actorId cardIndex
+        // 'target-actor' gameId  sourceId targetId cardIndex
+
+        // ----------------------------------------------
+        // always server initiated
+        // ----------------------------------------------
+        // 'mana-tick',
+        // 'game-tick',
+        // 'mistle-impact',
+        // 'shield-up',
+        // 'end-game'
+
+        // ToDo: read these by loading the list of commands and getting their names and parameters (and type them)
         this.gameEvents = [
             'start-game',
             'draw-mistle','draw-shield',
@@ -31,6 +55,7 @@ module.exports = class Game {
             'shield-up',
             'end-game'
         ];
+
         this.rules = {
             maxMana: 10,
             maxHealth: 30,
@@ -47,6 +72,7 @@ module.exports = class Game {
             shieldsUpTime: 1000,
             shieldDecayRate: 1000
         };
+
         this.actorCount = 10;
         for (let i = 0; i < this.actorCount; i++) {
             let avatarImg =  this.randomRobotImg();
@@ -66,59 +92,61 @@ module.exports = class Game {
     }
 
     created(){
-        // ----------------------------------------------------
-        // game events
-        // ----------------------------------------------------
-        // host only
-        // 'start-game' table.game
-        //
-        // server events for actors, client events for players
-        // 'draw-mistle' gameId actorId
-        // 'draw-shield' gameId  actorId
-        // 'select-card' gameId  actorId cardIndex
-        // 'target-actor' gameId  sourceId targetId cardIndex
-        // let gameEvents = [
-        //     'start-game',
-        //     'draw-mistle','draw-shield',
-        //     'select-card','target-actor',
-        // ];
 
-        // ----------------------------------------------
-        // nes websocket always server initiated
-        // ----------------------------------------------
-        // 'mana-tick',
-        // 'game-tick',
-        // 'mistle-impact',
-        // 'shield-up',
-        // 'end-game'
-
-        let _self = this;
+        let _scope = this;
         this.gameEvents.forEach(eventName => {
             this.bus.registerEvent(eventName);
             this.bus.addEventListener(eventName, function(data) {
-                _self.startGame(_self.store, data)
+                _scope.eventSwitch(eventName, data)
             });
         });
-        console.log('created called');
-
         this.bus.dispatchEvent('start-game');
-
-        //this.bus.dispatch('start-game',this.store, data);
-
-        // this.bus.on('draw-mistle',this.store, data);
-        // this.bus.on('draw-shield',this.store, data);
-        // this.bus.on('select-card',this.store, data);
-        // this.bus.on('target-actor',this.store, data);
-        //
-        // this.bus.on('mana-tick',this.store, data);
-        // this.bus.on('game-tick',this.store, data);
-        // this.bus.on('mistle-impact',this.store, data);
-        // this.bus.on('shield-up',this.store, data);
-        // this.bus.on('end-game',this.store, data);
     }
 
     beforeDestroy(){
         clearInterval(this.store.gameIntervalId);
+    }
+
+    eventSwitch(event, data) {
+        switch (event) {
+            case 'start-game': {
+                this.startGame(this.store, data);
+                // in vue
+                // this.$store.dispatch('startGame', data);
+                break;
+            }
+            case 'game-tick': {
+                this.gameTick(this.store, data);
+                break;
+            }
+            case 'mana-tick': {
+                this.manaTick(this.store, data);
+                break;
+            }
+            case 'draw-mistle': {
+                this.mistleDrawn(this.store, data);
+                break;
+            }
+            case 'draw-shield': {
+                this.shieldDrawn(this.store, data);
+                break;
+            }
+            case 'select-card': {
+                this.cardSelected(this.store, data);
+                break;
+            }
+            case 'target-actor': {
+                this.actorTargeted(this.store, data);
+                break;
+            }
+            case 'end-game': {
+                this.gameEnded(this.store, data);
+                break;
+            }
+            default: {
+                throw "App error, invalid event: " + event + " .";
+            }
+        }
     }
 
     startGame(state, data) {
@@ -160,10 +188,10 @@ module.exports = class Game {
                 actor.health--;
             }
         });
-        this.endGame(this.store)
+        this.gameEnded(this.store)
     }
 
-    endGame(state, data) {
+    gameEnded(state, data) {
         console.log("end-game");
         state.game.status = "OVER";
     }

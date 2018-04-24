@@ -1,6 +1,5 @@
 'use strict';
 
-const Que = require('p-queue');
 const Uuid = require('uuid');
 
 const defaults = {
@@ -24,13 +23,13 @@ const defaults = {
 
 module.exports = class Actor {
 
-    constructor(id, que, options) {
-        // ToDo: que out why require constructor doesn't get arguments
-        // console.log(que);
+    constructor(id, bus, options) {
+        // ToDo: figure out why require constructor doesn't get arguments
+        // console.log(bus);
 
         // required
         this.id = Uuid.v4();
-        this.que = que;
+        this.bus = bus;
 
         if (typeof options !== 'undefined'){
             this.name = options.name || defaults.name;
