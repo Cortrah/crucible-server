@@ -1,7 +1,8 @@
+'use strict';
+
 // some interesting options
 // https://stackoverflow.com/questions/15308371/custom-events-model-without-using-dom-events-in-javascript
-
-class Bus {
+module.exports = class Bus {
 
     constructor() {
         this.events = {};
@@ -25,5 +26,3 @@ class Bus {
         }
     }
 };
-
-module.exports = Bus;

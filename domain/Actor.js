@@ -1,3 +1,7 @@
+'use strict';
+
+const uuid = require('uuid');
+
 const defaults = {
     name:'?',
     team:'Bad Guys',
@@ -17,17 +21,14 @@ const defaults = {
     isActive:true
 };
 
-class Actor {
+module.exports = class Actor {
 
     constructor(id, bus, options) {
 
-        console.log(id);
-        console.log(bus);
-        console.log(options);
-
         // required
-        this.id = id;
+        this.id = uuid.v4();
         this.bus = bus;
+        console.log(bus);
 
         if (typeof options !== 'undefined'){
             this.name = options.name || defaults.name;
@@ -111,6 +112,4 @@ class Actor {
         }
         this.bus.dispatch('target-player', data);
     }
-}
-
-module.exports = Actor;
+};

@@ -1,10 +1,14 @@
+'use strict';
+
 const Bus = require('./Bus');
 const Actor = require('./Actor');
 
-class Game {
+const uuid = require('uuid');
+
+module.exports = class Game {
 
     constructor(options) {
-        this.id = 0;
+        this.id = uuid.v4();
         this.bus = new Bus();
         this.store = {
             name:'Waypoint Crucible Game X',
@@ -41,19 +45,14 @@ class Game {
             if (i >= this.actorCount / 2) {
                 team = 'Good Guys';
             }
-            console.log('--------');
-            console.log(i);
-            console.log(this.bus);
-            console.log(team);
-            console.log(avatarImg);
-            let newActor = new Actor(i, this.bus, {
-                team: team,
-                avatarImg: avatarImg
-            });
-            console.log(newActor);
-            console.log(this.store.actors);
+            let newActor = new Actor();
+            newActor.id = i;
+            newActor.bus = this.bus;
+            newActor.team = team;
+            newActor.avatarImg = avatarImg;
             this.store.actors.push(newActor);
         }
+        console.log(this.store.actors);
         this.created();
     }
 
@@ -226,6 +225,4 @@ class Game {
         const randomIndex = Math.round(Math.random() * 4);
         return '../static/robot' + randomIndex + '.png';
     }
-}
-
-module.exports = Game;
+};
