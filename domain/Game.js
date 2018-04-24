@@ -1,15 +1,15 @@
 'use strict';
 
-const Actor = require('./Actor');
-const Que = require('p-queue');
 const Uuid = require('uuid');
-const got = require('got');
+const Bus = require('./commands/Bus');
+
+const Actor = require('./Actor');
 
 module.exports = class Game {
 
     constructor(options) {
         this.id = Uuid.v4();
-        this.que = new Que({concurrency: 1});
+        this.bus = new Bus();
         this.store = {
             name:'Waypoint Crucible Game X',
             status:'PREPARING',
@@ -22,6 +22,15 @@ module.exports = class Game {
             timeStarted: 0,
             timeRunning: 0,
         };
+        this.gameEvents = [
+            'start-game',
+            'draw-mistle','draw-shield',
+            'select-card','target-actor',
+            'game-tick','mana-tick',
+            'mistle-impact',
+            'shield-up',
+            'end-game'
+        ];
         this.rules = {
             maxMana: 10,
             maxHealth: 30,
@@ -83,19 +92,16 @@ module.exports = class Game {
         // 'shield-up',
         // 'end-game'
 
-        // let _self = this;
-        // gameEvents.forEach(eventName => {
-        //     this.bus.on(eventName, function(data) {
-        //         _self.eventSwitch(eventName, data);
-        //     });
-        // });
-        console.log('created called');
-        const data = { type: 'startGame', otherStuff: 'gogo gadget' };
-        //this.que.add('start-game',this.store, data);
-
-        this.que.add(() => got('agnostechvalley.com')).then(() => {
-            console.log('Done: agnostechvalley.com');
+        let _self = this;
+        this.gameEvents.forEach(eventName => {
+            this.bus.registerEvent(eventName);
+            this.bus.addEventListener(eventName, function(data) {
+                _self.startGame(_self.store, data)
+            });
         });
+        console.log('created called');
+
+        this.bus.dispatchEvent('start-game');
 
         //this.bus.dispatch('start-game',this.store, data);
 
@@ -117,23 +123,23 @@ module.exports = class Game {
 
     startGame(state, data) {
         console.log('startGame called');
-        this.store.gameIntervalId = setInterval(this.gameTick, this.rules.gameTickInterval);
-        let scope = this;
-        state.game.actors.forEach(function(actor){
-            let remaining = actor.deck.length;
-            let randomIndex;
-            let last;
-
-            while (remaining) {
-                randomIndex = Math.floor(Math.random() * remaining--);
-                last = actor.deck[remaining];
-                actor.deck[remaining] = actor.deck[randomIndex];
-                actor.deck[randomIndex] = last;
-            }
-        });
-        state.game.status = "PLAYING";
-        state.game.timeStarted = Date.now();
-        state.game.timeRunning = 0;
+        // this.store.gameIntervalId = setInterval(this.gameTick, this.rules.gameTickInterval);
+        // let scope = this;
+        // state.game.actors.forEach(function(actor){
+        //     let remaining = actor.deck.length;
+        //     let randomIndex;
+        //     let last;
+        //
+        //     while (remaining) {
+        //         randomIndex = Math.floor(Math.random() * remaining--);
+        //         last = actor.deck[remaining];
+        //         actor.deck[remaining] = actor.deck[randomIndex];
+        //         actor.deck[randomIndex] = last;
+        //     }
+        // });
+        // state.game.status = "PLAYING";
+        // state.game.timeStarted = Date.now();
+        // state.game.timeRunning = 0;
     }
 
     gameTick(){
