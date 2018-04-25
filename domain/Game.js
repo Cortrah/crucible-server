@@ -4,6 +4,8 @@ const Uuid = require('uuid');
 const Bus = require('./commands/Bus');
 const Actor = require('./Actor');
 
+const StartGame = require('./commands/StartGame');
+
 module.exports = class Game {
 
     constructor(options) {
@@ -56,6 +58,10 @@ module.exports = class Game {
             'end-game'
         ];
 
+        this.commands = [
+            new StartGame()
+        ];
+
         this.rules = {
             maxMana: 10,
             maxHealth: 30,
@@ -93,11 +99,18 @@ module.exports = class Game {
 
     created(){
 
+        // this.gameEvents.forEach(eventName => {
+        //     this.bus.registerEvent(eventName);
+        //     this.bus.addEventListener(eventName, function(data) {
+        //         _scope.eventSwitch(eventName, data)
+        //     });
+        // });
+
         let _scope = this;
-        this.gameEvents.forEach(eventName => {
-            this.bus.registerEvent(eventName);
-            this.bus.addEventListener(eventName, function(data) {
-                _scope.eventSwitch(eventName, data)
+        this.commands.forEach(command => {
+            this.bus.registerEvent(command.name);
+            this.bus.addEventListener(command.name, function(command) {
+                _scope.eventSwitch(command)
             });
         });
         this.bus.dispatchEvent('start-game');
@@ -107,10 +120,11 @@ module.exports = class Game {
         clearInterval(this.store.gameIntervalId);
     }
 
-    eventSwitch(event, data) {
-        switch (event) {
+    eventSwitch(command) {
+        switch (command.name) {
             case 'start-game': {
-                this.startGame(this.store, data);
+                this.startGame(this.store, command.data);
+                command.doAction(this.store, command.data);
                 // in vue
                 // this.$store.dispatch('startGame', data);
                 break;
@@ -139,6 +153,14 @@ module.exports = class Game {
                 this.actorTargeted(this.store, data);
                 break;
             }
+            case 'mistle-impacted': {
+                this.mistleImpacted(this.store, data);
+                break;
+            }
+            case 'shield-up': {
+                this.shieldUp(this.store, data);
+                break;
+            }
             case 'end-game': {
                 this.gameEnded(this.store, data);
                 break;
@@ -151,6 +173,8 @@ module.exports = class Game {
 
     startGame(state, data) {
         console.log('startGame called');
+        console.log(state);
+        console.log(data);
         // this.store.gameIntervalId = setInterval(this.gameTick, this.rules.gameTickInterval);
         // let scope = this;
         // state.game.actors.forEach(function(actor){
