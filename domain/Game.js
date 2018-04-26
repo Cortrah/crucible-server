@@ -1,7 +1,7 @@
 'use strict';
 
 const Uuid = require('uuid');
-const Bus = require('./commands/Bus');
+const Bus = require('../main/Bus');
 const Actor = require('./Actor');
 
 const StartGame = require('./commands/StartGame');

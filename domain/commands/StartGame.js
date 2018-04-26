@@ -1,6 +1,6 @@
 'use strict';
 
-const Command = require("./Command");
+const Command = require("../../main/Command");
 
 module.exports = class StartGame extends Command {
 
@@ -10,8 +10,9 @@ module.exports = class StartGame extends Command {
     }
 
     doAction(context, data) {
-        console.log("start-game command called");
+        console.log('start-game command called');
         console.log(context);
         console.log(data);
+        return 'ok'
     }
 };

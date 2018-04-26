@@ -4,7 +4,7 @@
 // https://stackoverflow.com/questions/15308371/custom-events-model-without-using-dom-events-in-javascript
 // https://github.com/sindresorhus/p-queue
 
-module.exports = class CommandQueue {
+module.exports = class Queue {
 
     constructor (view, playHead = 0, commands = []) {
         this.view = view;
