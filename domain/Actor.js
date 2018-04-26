@@ -18,17 +18,18 @@ const defaults = {
     deckSize:20,
     drawEnabled:false,
     isbleedingOut:false,
-    isActive:true
+    isActive:true,
 };
 
 module.exports = class Actor {
 
-    constructor(id, bus, options) {
+    constructor(index, bus, options) {
         // ToDo: figure out why require constructor doesn't get arguments
         // console.log(bus);
+        this.id = Uuid.v4();
 
         // required
-        this.id = Uuid.v4();
+        this.index = index;
         this.bus = bus;
 
         if (typeof options !== 'undefined'){
@@ -53,17 +54,17 @@ module.exports = class Actor {
         }
     }
 
-    drawMistle(){
+    drawMistle(game){
 
         const data = {};
-        let myself = this.game.actors[this.user.playerId];
-        if(myself.isActive && this.game.status === "PLAYING"){
+        let myself = game.actors[this.index];
+        if(myself.isActive && game.state.status === "PLAYING"){
             if(myself.cards.length < 5 && myself.deckSize > 0){
-                this.$bus.$emit("draw-mistle", this.user.playerId);
+                this.bus.dispatchEvent('draw-mistle', data);
+                //this.$bus.$emit("draw-mistle", this.user.playerId);
                 //this.$store.dispatch({ type: 'drawMistle', actorId: actorId});
             }
         }
-        this.bus.dispatch('draw-mistle', data);
     }
 
     drawShield(){
@@ -76,7 +77,7 @@ module.exports = class Actor {
                 //this.$store.dispatch({ type: 'drawShield', actorId: actorId});
             }
         }
-        this.bus.dispatch('draw-shield', data);
+        this.bus.dispatchEvent('draw-shield', data);
     }
 
     selectCard(){
@@ -87,7 +88,7 @@ module.exports = class Actor {
             this.$bus.$emit("select-card", this.user.playerId, cardIndex);
             //this.$store.dispatch({ type: 'selectCard', actorId:actorId, cardIndex:cardIndex});
         }
-        this.bus.dispatch('select-card', data);
+        this.bus.dispatchEvent('select-card', data);
     }
 
     targetActor(){
@@ -111,6 +112,6 @@ module.exports = class Actor {
             //     cardIndex:cardIndex
             // });
         }
-        this.bus.dispatch('target-player', data);
+        this.bus.dispatchEvent('target-player', data);
     }
 };

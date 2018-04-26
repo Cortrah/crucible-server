@@ -9,7 +9,7 @@ module.exports = class EndGame extends Command {
         console.log(args);
     }
 
-    doAction(context, data) {
+    doAction(state, data) {
         console.log('end-game command called');
         console.log("end-game");
         state.game.status = "OVER";

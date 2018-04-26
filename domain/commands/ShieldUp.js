@@ -9,7 +9,7 @@ module.exports = class ShieldUp extends Command {
         console.log(args);
     }
 
-    doAction(context, data) {
+    doAction(state, data) {
         console.log('shield-up command called');
         let sourceActor = state.game.actors[shield.sourceId];
         let targetActor = state.game.actors[shield.targetId];

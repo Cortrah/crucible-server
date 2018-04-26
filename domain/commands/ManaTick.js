@@ -9,7 +9,7 @@ module.exports = class ManaTick extends Command {
         console.log(args);
     }
 
-    doAction(context, data) {
+    doAction(state, data) {
         console.log('mana-tick command called');
         console.log("mana-tick");
         state.game.actors.forEach(function(actor){

@@ -12,7 +12,7 @@ module.exports = class Game {
         this.id = Uuid.v4();
         this.bus = new Bus();
 
-        this.store = {
+        this.state = {
             name:'Waypoint Crucible Game X',
             status:'PREPARING',
             winner:'',
@@ -24,28 +24,6 @@ module.exports = class Game {
             timeStarted: 0,
             timeRunning: 0,
         };
-
-        // ----------------------------------------------------
-        // game events, host only
-        // ----------------------------------------------------
-        // 'start-game' table.game
-
-        // ----------------------------------------------------
-        // server events for actors, client events for players
-        // ----------------------------------------------------
-        // 'draw-mistle' gameId actorId
-        // 'draw-shield' gameId  actorId
-        // 'select-card' gameId  actorId cardIndex
-        // 'target-actor' gameId  sourceId targetId cardIndex
-
-        // ----------------------------------------------
-        // always server initiated
-        // ----------------------------------------------
-        // 'mana-tick',
-        // 'game-tick',
-        // 'mistle-impact',
-        // 'shield-up',
-        // 'end-game'
 
         this.commands = [
             new StartGame(),
@@ -86,26 +64,23 @@ module.exports = class Game {
             newActor.bus = this.bus;
             newActor.team = team;
             newActor.avatarImg = avatarImg;
-            this.store.actors.push(newActor);
+            this.state.actors.push(newActor);
         }
         this.created();
     }
 
     created(){
-
         this.commands.forEach(command => {
             this.bus.registerEvent(command.name);
             this.bus.addEventListener(command.name, function(command) {
-                command.doAction(this.store, command.data);
-                // in vue
-                // this.$store.dispatch('startGame', data);
+                command.doAction(this.state, command.data);
             });
         });
         this.bus.dispatchEvent('start-game');
     }
 
     beforeDestroy(){
-        clearInterval(this.store.gameIntervalId);
+        clearInterval(this.state.gameIntervalId);
     }
 
     randomRobotImg(){

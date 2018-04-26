@@ -9,7 +9,7 @@ module.exports = class TargetActor extends Command {
         console.log(args);
     }
 
-    doAction(context, data) {
+    doAction(state, data) {
         console.log('target-actor command called');
         let sourceActor = state.game.actors[data.sourceId];
         let targetActor = state.game.actors[data.targetId];
