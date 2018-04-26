@@ -11,8 +11,8 @@ module.exports = class EndGame extends Command {
 
     doAction(context, data) {
         console.log('end-game command called');
-        console.log(context);
-        console.log(data);
+        console.log("end-game");
+        state.game.status = "OVER";
         return 'ok'
     }
 };

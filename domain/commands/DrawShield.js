@@ -11,8 +11,14 @@ module.exports = class DrawShield extends Command {
 
     doAction(context, data) {
         console.log('draw-shield command called');
-        console.log(context);
-        console.log(data);
+        let actor = state.game.actors[data.actorId];
+        if(actor.mana >= 1 && actor.deck.length > 0) {
+            let drawn = actor.deck[0];
+            actor.cards.push({cardType:"SHIELD", value: drawn});
+            actor.deck.splice(0, 1);
+            actor.deckSize = actor.deck.length;
+            actor.mana--;
+        }
         return 'ok'
     }
 };

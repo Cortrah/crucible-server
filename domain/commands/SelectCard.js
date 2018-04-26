@@ -11,8 +11,8 @@ module.exports = class SelectCard extends Command {
 
     doAction(context, data) {
         console.log('select-card command called');
-        console.log(context);
-        console.log(data);
+        let actor = state.game.actors[data.actorId];
+        actor.selectedCardIndex = data.cardIndex;
         return 'ok'
     }
 };

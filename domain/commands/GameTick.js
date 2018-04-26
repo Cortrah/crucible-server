@@ -11,8 +11,7 @@ module.exports = class GameTick extends Command {
 
     doAction(context, data) {
         console.log('game-tick command called');
-        console.log(context);
-        console.log(data);
+        this.manaTick(this.store);
         return 'ok'
     }
 };

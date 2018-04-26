@@ -47,19 +47,13 @@ module.exports = class Game {
         // 'shield-up',
         // 'end-game'
 
-        // ToDo: read these by loading the list of commands and getting their names and parameters (and type them)
-        this.gameEvents = [
-            'start-game',
-            'draw-mistle','draw-shield',
-            'select-card','target-actor',
-            'game-tick','mana-tick',
-            'mistle-impact',
-            'shield-up',
-            'end-game'
-        ];
-
         this.commands = [
-            new StartGame()
+            new StartGame(),
+            new DrawMistle(), new DrawShield(),
+            new SelectCart(), new TargetActor(),
+            new GameTick(), new ManaTick(),
+            new MistleImpact(), new ShieldUp(),
+            new EndGame()
         ];
 
         this.rules = {
@@ -99,18 +93,12 @@ module.exports = class Game {
 
     created(){
 
-        // this.gameEvents.forEach(eventName => {
-        //     this.bus.registerEvent(eventName);
-        //     this.bus.addEventListener(eventName, function(data) {
-        //         _scope.eventSwitch(eventName, data)
-        //     });
-        // });
-
-        let _scope = this;
         this.commands.forEach(command => {
             this.bus.registerEvent(command.name);
             this.bus.addEventListener(command.name, function(command) {
-                _scope.eventSwitch(command)
+                command.doAction(this.store, command.data);
+                // in vue
+                // this.$store.dispatch('startGame', data);
             });
         });
         this.bus.dispatchEvent('start-game');
@@ -118,174 +106,6 @@ module.exports = class Game {
 
     beforeDestroy(){
         clearInterval(this.store.gameIntervalId);
-    }
-
-    eventSwitch(command) {
-        switch (command.name) {
-            case 'start-game': {
-                this.startGame(this.store, command.data);
-                command.doAction(this.store, command.data);
-                // in vue
-                // this.$store.dispatch('startGame', data);
-                break;
-            }
-            case 'game-tick': {
-                this.gameTick(this.store, data);
-                break;
-            }
-            case 'mana-tick': {
-                this.manaTick(this.store, data);
-                break;
-            }
-            case 'draw-mistle': {
-                this.mistleDrawn(this.store, data);
-                break;
-            }
-            case 'draw-shield': {
-                this.shieldDrawn(this.store, data);
-                break;
-            }
-            case 'select-card': {
-                this.cardSelected(this.store, data);
-                break;
-            }
-            case 'target-actor': {
-                this.actorTargeted(this.store, data);
-                break;
-            }
-            case 'mistle-impacted': {
-                this.mistleImpacted(this.store, data);
-                break;
-            }
-            case 'shield-up': {
-                this.shieldUp(this.store, data);
-                break;
-            }
-            case 'end-game': {
-                this.gameEnded(this.store, data);
-                break;
-            }
-            default: {
-                throw "App error, invalid event: " + event + " .";
-            }
-        }
-    }
-
-    startGame(state, data) {
-        console.log('startGame called');
-        console.log(state);
-        console.log(data);
-        // this.store.gameIntervalId = setInterval(this.gameTick, this.rules.gameTickInterval);
-        // let scope = this;
-        // state.game.actors.forEach(function(actor){
-        //     let remaining = actor.deck.length;
-        //     let randomIndex;
-        //     let last;
-        //
-        //     while (remaining) {
-        //         randomIndex = Math.floor(Math.random() * remaining--);
-        //         last = actor.deck[remaining];
-        //         actor.deck[remaining] = actor.deck[randomIndex];
-        //         actor.deck[randomIndex] = last;
-        //     }
-        // });
-        // state.game.status = "PLAYING";
-        // state.game.timeStarted = Date.now();
-        // state.game.timeRunning = 0;
-    }
-
-    gameTick(){
-        console.log("game-tick");
-        this.manaTick(this.store);
-    }
-
-    manaTick(state) {
-        console.log("mana-tick");
-        state.game.actors.forEach(function(actor){
-            if(actor.maxMana < 10){
-                actor.maxMana++;
-            }
-            if(actor.mana < actor.maxMana){
-                actor.mana++;
-            }
-            if(actor.deck.length <= 0 && actor.cards.length === 0 && actor.isActive){
-                actor.health--;
-            }
-        });
-        this.gameEnded(this.store)
-    }
-
-    gameEnded(state, data) {
-        console.log("end-game");
-        state.game.status = "OVER";
-    }
-
-    mistleDrawn(state, data){
-        let actor = state.game.actors[data.actorId];
-        if(actor.mana >= 1 && actor.deck.length > 0) {
-            let drawn = actor.deck[0];
-            actor.cards.push({cardType:"MISTLE", value: drawn});
-            actor.deck.splice(0, 1);
-            actor.deckSize = actor.deck.length;
-            actor.mana--;
-        }
-    }
-
-    shieldDrawn(state, data){
-        let actor = state.game.actors[data.actorId];
-        if(actor.mana >= 1 && actor.deck.length > 0) {
-            let drawn = actor.deck[0];
-            actor.cards.push({cardType:"SHIELD", value: drawn});
-            actor.deck.splice(0, 1);
-            actor.deckSize = actor.deck.length;
-            actor.mana--;
-        }
-    }
-
-    cardSelected(state, data){
-        let actor = state.game.actors[data.actorId];
-        actor.selectedCardIndex = data.cardIndex;
-    }
-
-    actorTargeted(state, data) {
-        let sourceActor = state.game.actors[data.sourceId];
-        let targetActor = state.game.actors[data.targetId];
-        let card = sourceActor.cards[data.cardIndex];
-        if(sourceActor.mana >= card.value){
-            sourceActor.mana -= card.value;
-            sourceActor.cards.splice(sourceActor.selectedCardIndex, 1);
-            sourceActor.selectedCardIndex = -1;
-            if(card.cardType === "MISTLE") {
-                state.game.mistles.push(data.mistle);
-            } else if (card.cardType === "SHIELD"){
-                targetActor.shields.push(data.shield);
-            }
-        }
-    }
-
-    mistleImpacted(state, mistle){
-        let sourceActor = state.game.actors[mistle.sourceId];
-        let targetActor = state.game.actors[mistle.targetId];
-        if(state.game.status === "PLAYING") {
-            targetActor.health = Math.max(0, targetActor.health - mistle.card.value);
-            mistle.landed = true;
-            if (targetActor.health <= 0) {
-                targetActor.isActive = false;
-                let activeOpponents = state.game.actors.filter(actor => (actor.isActive && actor.team === targetActor.team));
-                if(activeOpponents.length === 0){
-                    state.game.winner = sourceActor.team;
-                    state.game.status = "OVER";
-                }
-            }
-        }
-    }
-
-    shieldUp(state, shield){
-        let sourceActor = state.game.actors[shield.sourceId];
-        let targetActor = state.game.actors[shield.targetId];
-        if(state.game.status === "PLAYING") {
-            shield.isUp = true;
-        }
     }
 
     randomRobotImg(){
