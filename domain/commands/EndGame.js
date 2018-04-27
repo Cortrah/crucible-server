@@ -9,7 +9,7 @@ module.exports = class EndGame extends Command {
         console.log(args);
     }
 
-    doAction(state, command) {
+    doAction(store, command) {
         let data = command.data;
         console.log('end-game command called');
         console.log("end-game");

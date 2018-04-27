@@ -9,7 +9,7 @@ module.exports = class MistleImpacted extends Command {
         console.log(args);
     }
 
-    doAction(state, command) {
+    doAction(store, command) {
         let data = command.data;
         console.log('mistle-impacted command called');
         let sourceActor = store.actors[mistle.sourceId];

@@ -5,6 +5,9 @@ const Bus = require('../main/Bus');
 const Actor = require('./Actor');
 
 const StartGame = require('./commands/StartGame');
+const GameTick = require('./commands/GameTick');
+const DrawMistle = require('./commands/DrawMistle');
+const TargetActor = require('./commands/TargetActor');
 
 module.exports = class Game {
 
@@ -43,10 +46,10 @@ module.exports = class Game {
         };
 
         this.commands = [
-            new StartGame(),
-            new DrawMistle(), new DrawShield(),
-            new SelectCart(), new TargetActor(),
-            new GameTick(), new ManaTick(),
+            new StartGame(this.bus, this.store),
+            new DrawMistle(this.bus, this.store), new DrawShield(),
+            new SelectCard(), new TargetActor(this.bus, this.store),
+            new GameTick(this.bus, this.store), new ManaTick(),
             new MistleImpact(), new ShieldUp(),
             new EndGame()
         ];
@@ -75,14 +78,16 @@ module.exports = class Game {
                 command.doAction(this.store, command);
             });
         });
-        this.bus.dispatchEvent('start-game');
+        // ToDo: obviously turn the commands into a map with named keys (where 0 is 'start-game')
+        this.commands[0].dispatch(this.bus, this.store);
     }
 
     beforeDestroy(){
+        // ToDo: move this to EndGame Command
         clearInterval(this.store.gameIntervalId);
     }
 
-    randomRobotImg(){
+    static randomRobotImg(){
         const randomIndex = Math.round(Math.random() * 4);
         return '../static/robot' + randomIndex + '.png';
     }

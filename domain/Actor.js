@@ -62,6 +62,9 @@ module.exports = class Actor {
     gameTick(command){
         // main bot logic
         // decide weather to draw a mistle, a shield, select a card or target a player
+        // the GameTick command should have the store data for the game
+        let drawMistle = new DrawMistle(this.bus, command.data);
+        drawMistle.dispatch();
     }
 
     drawMistle(game){

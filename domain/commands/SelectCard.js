@@ -9,7 +9,7 @@ module.exports = class SelectCard extends Command {
         console.log(args);
     }
 
-    doAction(state, command) {
+    doAction(store, command) {
         let data = command.data;
         console.log('select-card command called');
         let actor = store.actors[data.actorId];

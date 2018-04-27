@@ -9,7 +9,7 @@ module.exports = class DrawShield extends Command {
         console.log(args);
     }
 
-    doAction(state, command) {
+    doAction(store, command) {
         let data = command.data;
         console.log('draw-shield command called');
         let actor = state.game.actors[data.actorId];

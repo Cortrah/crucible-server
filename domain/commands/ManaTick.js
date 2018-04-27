@@ -9,7 +9,7 @@ module.exports = class ManaTick extends Command {
         console.log(args);
     }
 
-    doAction(state, command) {
+    doAction(store, command) {
         let data = command.data;
         console.log('mana-tick command called');
         console.log("mana-tick");
