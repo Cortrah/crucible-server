@@ -9,7 +9,8 @@ module.exports = class GameTick extends Command {
         console.log(args);
     }
 
-    doAction(state, data) {
+    doAction(state, command) {
+        let data = command.data;
         console.log('game-tick command called');
         this.manaTick(this.store);
         return 'ok'

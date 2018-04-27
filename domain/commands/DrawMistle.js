@@ -9,7 +9,8 @@ module.exports = class DrawMistle extends Command {
         console.log(args);
     }
 
-    doAction(state, data) {
+    doAction(state, command) {
+        let data = command.data;
         console.log('draw-mistle command called');
         let actor = state.game.actors[data.actorId];
         if(actor.mana >= 1 && actor.deck.length > 0) {

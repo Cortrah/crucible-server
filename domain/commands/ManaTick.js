@@ -9,10 +9,11 @@ module.exports = class ManaTick extends Command {
         console.log(args);
     }
 
-    doAction(state, data) {
+    doAction(state, command) {
+        let data = command.data;
         console.log('mana-tick command called');
         console.log("mana-tick");
-        state.game.actors.forEach(function(actor){
+        store.actors.forEach(function(actor){
             if(actor.maxMana < 10){
                 actor.maxMana++;
             }

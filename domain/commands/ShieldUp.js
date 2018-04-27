@@ -9,11 +9,12 @@ module.exports = class ShieldUp extends Command {
         console.log(args);
     }
 
-    doAction(state, data) {
+    doAction(state, command) {
+        let data = command.data;
         console.log('shield-up command called');
-        let sourceActor = state.game.actors[shield.sourceId];
-        let targetActor = state.game.actors[shield.targetId];
-        if(state.game.status === "PLAYING") {
+        let sourceActor = store.actors[shield.sourceId];
+        let targetActor =store.actors[shield.targetId];
+        if(store.status === "PLAYING") {
             shield.isUp = true;
         }
         return 'ok'

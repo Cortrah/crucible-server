@@ -9,14 +9,15 @@ module.exports = class StartGame extends Command {
         console.log(args);
     }
 
-    doAction(state, data) {
+    doAction(state, command) {
+        let data = command.data;
         console.log('start-game command called');
-        console.log(state);
+        console.log(store);
         console.log(data);
 
-         state.gameIntervalId = setInterval(this.gameTick, this.rules.gameTickInterval);
-         let scope = this;
-         state.game.actors.forEach(function(actor){
+        store.gameIntervalId = setInterval(this.gameTick, this.store.rules.gameTickInterval);
+        let scope = this;
+        store.actors.forEach(function(actor){
              let remaining = actor.deck.length;
              let randomIndex;
              let last;
@@ -28,9 +29,9 @@ module.exports = class StartGame extends Command {
                  actor.deck[randomIndex] = last;
              }
          });
-         state.game.status = "PLAYING";
-         state.game.timeStarted = Date.now();
-         state.game.timeRunning = 0;
+        store.status = "PLAYING";
+        store.timeStarted = Date.now();
+        store.timeRunning = 0;
         return 'ok'
     }
 };

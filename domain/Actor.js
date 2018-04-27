@@ -3,6 +3,7 @@
 const Uuid = require('uuid');
 
 const defaults = {
+    index:0,
     name:'?',
     team:'Bad Guys',
     controller:'AI',
@@ -52,6 +53,15 @@ module.exports = class Actor {
         } else {
             Object.assign(this, defaults);
         }
+
+        this.bus.addEventListener('game-tick', function(command) {
+            gameTick(command)
+        });
+    }
+
+    gameTick(command){
+        // main bot logic
+        // decide weather to draw a mistle, a shield, select a card or target a player
     }
 
     drawMistle(game){
@@ -94,13 +104,6 @@ module.exports = class Actor {
     targetActor(){
 
         const data = {};
-        // if no store.user.actorId == null and game.status === "Preparing"
-        // then we are setting a slot to a player instead of a bot
-        // (if there is an actorId there should be a way to leave a spot by setting it back to null)
-        if ((this.user.playerId == null) && (this.game.status === "Preparing")){
-            this.$bus.$emit("sit-at-table", targetId);
-        }
-
         let myself = this.game.actors[this.user.playerId];
         let cardIndex = myself.selectedCardIndex;
         if(myself.isActive && this.game.status === "PLAYING"){

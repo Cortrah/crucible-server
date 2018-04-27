@@ -9,9 +9,10 @@ module.exports = class SelectCard extends Command {
         console.log(args);
     }
 
-    doAction(state, data) {
+    doAction(state, command) {
+        let data = command.data;
         console.log('select-card command called');
-        let actor = state.game.actors[data.actorId];
+        let actor = store.actors[data.actorId];
         actor.selectedCardIndex = data.cardIndex;
         return 'ok'
     }
