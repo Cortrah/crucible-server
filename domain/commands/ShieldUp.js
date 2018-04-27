@@ -4,18 +4,18 @@ const Command = require("../../main/Command");
 
 module.exports = class ShieldUp extends Command {
 
-    constructor(args) {
+    constructor(shield) {
         super('shield-up');
-        console.log(args);
+        this.data = {
+            shield: shield
+        };
     }
 
     doAction(store, command) {
-        let data = command.data;
-        console.log('shield-up command called');
-        let sourceActor = store.actors[shield.sourceId];
-        let targetActor =store.actors[shield.targetId];
+        let sourceActor = store.actors[this.data.shield.sourceId];
+        let targetActor = store.actors[this.data.shield.targetId];
         if(store.status === "PLAYING") {
-            shield.isUp = true;
+            this.data.shield.isUp = true;
         }
         return 'ok'
     }

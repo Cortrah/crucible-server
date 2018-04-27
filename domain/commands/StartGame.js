@@ -1,35 +1,23 @@
 'use strict';
 
 const Command = require("../../main/Command");
+const GameTick = require("./GameTick");
 
 module.exports = class StartGame extends Command {
 
-    constructor(bus, store) {
+    constructor() {
         super('start-game');
-        console.log(args);
-        this.bus = bus;
-        this.store = store;
-    }
-
-    // eventually use the bus and the store from the constructor
-    // for now they are placeholders until I figure out the problem with the constructor args
-    dispatch(bus, store) {
-        bus.dispatchEvent(this.name, store);
     }
 
     doAction(store, command) {
         let data = command.data;
-        console.log('start-game command called');
-        console.log(store);
-        console.log(data);
-
         store.gameIntervalId = setInterval(this.gameTick, this.store.rules.gameTickInterval);
-        let scope = this;
+
+        // shuffle each actors deck
         store.actors.forEach(function(actor){
              let remaining = actor.deck.length;
              let randomIndex;
              let last;
-
              while (remaining) {
                  randomIndex = Math.floor(Math.random() * remaining--);
                  last = actor.deck[remaining];
@@ -37,9 +25,14 @@ module.exports = class StartGame extends Command {
                  actor.deck[randomIndex] = last;
              }
          });
+
         store.status = "PLAYING";
         store.timeStarted = Date.now();
         store.timeRunning = 0;
         return 'ok'
+    }
+
+    gameTick(){
+        new GameTick().dispatch(this.bus, this.store);
     }
 };

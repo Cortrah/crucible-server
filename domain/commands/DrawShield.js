@@ -4,15 +4,16 @@ const Command = require("../../main/Command");
 
 module.exports = class DrawShield extends Command {
 
-    constructor(args) {
+    constructor(actorId) {
         super('draw-shield');
-        console.log(args);
+        this.data = {
+            actorId: actorId || 0
+        };
     }
 
     doAction(store, command) {
         let data = command.data;
-        console.log('draw-shield command called');
-        let actor = state.game.actors[data.actorId];
+        let actor = store.actors[data.actorId];
         if(actor.mana >= 1 && actor.deck.length > 0) {
             let drawn = actor.deck[0];
             actor.cards.push({cardType:"SHIELD", value: drawn});

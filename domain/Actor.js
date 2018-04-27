@@ -1,6 +1,9 @@
 'use strict';
 
-const Uuid = require('uuid');
+const DrawMistle = require('./commands/DrawMistle');
+const DrawShield = require('./commands/DrawShield');
+const SelectCard = require('./commands/SelectCard');
+const TargetActor = require('./commands/TargetActor');
 
 const defaults = {
     index:0,
@@ -25,9 +28,6 @@ const defaults = {
 module.exports = class Actor {
 
     constructor(index, bus, options) {
-        // ToDo: figure out why require constructor doesn't get arguments
-        // console.log(bus);
-        this.id = Uuid.v4();
 
         // required
         this.index = index;
@@ -55,127 +55,61 @@ module.exports = class Actor {
         }
 
         this.bus.addEventListener('game-tick', function(command) {
-            gameTick(command)
+            this.gameTick(command)
         });
     }
 
     gameTick(command){
-        // main bot logic
-        // decide weather to draw a mistle, a shield, select a card or target a player
-        // the GameTick command should have the store data for the game
-        let drawMistle = new DrawMistle(this.bus, command.data);
-        drawMistle.dispatch();
-
-        // ToDo: Edit this from december version, logic should be there though
-        if(this.game.status === "PLAYING"){
-            for(var i = 0; i < this.game.players.length; i++) {
-                let player = this.game.players[i];
-                if (player.isActive && player.controller === "AI") {
-                    // if the player has < 5 cards and more than 1 mana draw a card
-                    if (player.cards.length < 5 && player.mana > 0) {
-                        this.$store.dispatch({ type: 'drawMistle', playerId: i});
+        // decide weather to draw a mistle, a shield, select a card or target an actor
+        if(command.store.status === 'PLAYING'){
+            let actor = command.store.actors[this.index];
+            if (actor.isActive && actor.controller === "AI") {
+                // ToDo: choose whether to use an existing card instead of drawing a new one
+                // if the actor has < 5 cards and more than 1 mana draw a card
+                if (actor.cards.length < 5 && actor.mana > 0) {
+                    // ToDo: choose to draw a mistle or a shield
+                    new DrawMistle(actor.index).dispatch(command.bus, command.store);
+                } else {
+                    // if the actor has cards and enough mana to fire a mistle
+                    // ToDo: choose a mistle based on a strategy
+                    // in this case we just choose the first and wait till we can fire it
+                    let cardIndex = 0;
+                    let card = actor.cards[cardIndex];
+                    if (card.value < actor.mana) {
+                        new SelectCard(actor.index, cardIndex).dispatch(command.bus, command.store);
+                    }
+                    // choose an enemy that's still active
+                    if (actor.team === "Good Guys") {
+                        // make the enemy chosen random
+                        let activeFoes = command.store.actors.filter((actor) =>
+                            actor.isActive && actor.team === "Bad Guys"
+                        );
+                        let foeCount = activeFoes.length;
+                        let foeChosen = Math.floor(Math.random()*foeCount);
+                        let foe = activeFoes[foeChosen];
+                        // and fire at it
+                        new TargetActor(
+                            actor.index,
+                            foe.id,
+                            cardIndex
+                        ).dispatch(command.bus, command.store);
                     } else {
-                        // once a player has 5 cards
-                        // if the player has cards and enough mana to fire a mistle
-                        // eventually choose the best mistle possible to fire
-                        // in this case we just choose the first and wait till we can fire it
-                        var ci = 0;
-                        var card = player.cards[ci];
-                        if (card.value < player.mana) {
-                            this.$store.dispatch({ type: 'selectCard', playerId:i, cardIndex:ci});
-                        }
-                        // choose an enemy that's still active
-                        if (player.team === "Good Guys") {
-                            // make the enemy chosen random
-                            let activeFoes = this.game.players.filter((player) =>
-                                player.isActive && player.team === "Bad Guys"
-                            );
-                            let foeCount = activeFoes.length;
-                            let foeChosen = Math.floor(Math.random()*foeCount);
-                            let foe = activeFoes[foeChosen];
-                            // and fire at it
-                            this.$store.dispatch({
-                                type: 'targetPlayer',
-                                sourceId:i,
-                                targetId:foe.id,
-                                cardIndex:ci
-                            });
-                        } else {
-                            // if the player is axis its enemy is an allie
-                            let activeFoes = this.game.players.filter((player) =>
-                                player.isActive && player.team === "Good Guys"
-                            );
-                            let foeCount = activeFoes.length;
-                            let foeChosen = Math.floor(Math.random()*foeCount);
-                            let foe = activeFoes[foeChosen];
-                            // and fire at it
-                            this.$store.dispatch({
-                                type: 'targetPlayer',
-                                sourceId:i,
-                                targetId:foe.id,
-                                cardIndex:ci
-                            });
-                        }
+                        // if the actor is axis its enemy is an allie
+                        let activeFoes = command.store.actors.filter((actor) =>
+                            actor.isActive && actor.team === "Good Guys"
+                        );
+                        let foeCount = activeFoes.length;
+                        let foeChosen = Math.floor(Math.random()*foeCount);
+                        let foe = activeFoes[foeChosen];
+                        // and fire at it
+                        new TargetActor(
+                            actor.index,
+                            foe.id,
+                            cardIndex
+                        ).dispatch(command.bus, command.store);
                     }
                 }
             }
-        } else if( this.game.status === "OVER") {
-            clearInterval(this.gameIntervalId);
         }
-
-    }
-
-    drawMistle(game){
-
-        const data = {};
-        let myself = game.actors[this.index];
-        if(myself.isActive && game.state.status === "PLAYING"){
-            if(myself.cards.length < 5 && myself.deckSize > 0){
-                this.bus.dispatchEvent('draw-mistle', data);
-                //this.$bus.$emit("draw-mistle", this.user.playerId);
-                //this.$store.dispatch({ type: 'drawMistle', actorId: actorId});
-            }
-        }
-    }
-
-    drawShield(){
-
-        const data = {};
-        let myself = this.game.actors[this.user.playerId];
-        if(myself.isActive && this.game.status === "PLAYING"){
-            if(myself.cards.length < 5 && myself.deckSize > 0) {
-                this.$bus.$emit("draw-shield", this.user.playerId);
-                //this.$store.dispatch({ type: 'drawShield', actorId: actorId});
-            }
-        }
-        this.bus.dispatchEvent('draw-shield', data);
-    }
-
-    selectCard(){
-
-        const data = {};
-        let myself = this.game.actors[this.user.playerId];
-        if(myself.isActive && this.game.status === "PLAYING"){
-            this.$bus.$emit("select-card", this.user.playerId, cardIndex);
-            //this.$store.dispatch({ type: 'selectCard', actorId:actorId, cardIndex:cardIndex});
-        }
-        this.bus.dispatchEvent('select-card', data);
-    }
-
-    targetActor(){
-
-        const data = {};
-        let myself = this.game.actors[this.user.playerId];
-        let cardIndex = myself.selectedCardIndex;
-        if(myself.isActive && this.game.status === "PLAYING"){
-            this.$bus.$emit("target-actor", this.user.playerId, targetId, cardIndex);
-            // this.$store.dispatch({
-            //     type: 'targetActor',
-            //     sourceId:sourceId,
-            //     targetId:targetId,
-            //     cardIndex:cardIndex
-            // });
-        }
-        this.bus.dispatchEvent('target-player', data);
     }
 };

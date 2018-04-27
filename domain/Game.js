@@ -5,9 +5,15 @@ const Bus = require('../main/Bus');
 const Actor = require('./Actor');
 
 const StartGame = require('./commands/StartGame');
-const GameTick = require('./commands/GameTick');
 const DrawMistle = require('./commands/DrawMistle');
+const DrawShield = require('./commands/DrawShield');
+const SelectCard = require('./commands/SelectCard');
 const TargetActor = require('./commands/TargetActor');
+const GameTick = require('./commands/GameTick');
+const ManaTick = require('./commands/ManaTick');
+const MistleImpact = require('./commands/MistleImpact');
+const ShieldUp = require('./commands/ShieldUp');
+const EndGame = require('./commands/EndGame');
 
 module.exports = class Game {
 
@@ -46,14 +52,15 @@ module.exports = class Game {
         };
 
         this.commands = [
-            new StartGame(this.bus, this.store),
-            new DrawMistle(this.bus, this.store), new DrawShield(),
-            new SelectCard(), new TargetActor(this.bus, this.store),
-            new GameTick(this.bus, this.store), new ManaTick(),
+            new StartGame(),
+            new DrawMistle(), new DrawShield(),
+            new SelectCard(), new TargetActor(),
+            new GameTick(), new ManaTick(),
             new MistleImpact(), new ShieldUp(),
             new EndGame()
         ];
 
+        // init actors
         for (let i = 0; i < this.store.actorCount; i++) {
             let avatarImg =  this.randomRobotImg();
             let team = "Bad Guys";
@@ -78,12 +85,10 @@ module.exports = class Game {
                 command.doAction(this.store, command);
             });
         });
-        // ToDo: obviously turn the commands into a map with named keys (where 0 is 'start-game')
-        this.commands[0].dispatch(this.bus, this.store);
+        new StartGame().dispatch(this.bus, this.store);
     }
 
     beforeDestroy(){
-        // ToDo: move this to EndGame Command
         clearInterval(this.store.gameIntervalId);
     }
 

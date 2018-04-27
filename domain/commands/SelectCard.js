@@ -4,14 +4,15 @@ const Command = require("../../main/Command");
 
 module.exports = class SelectCard extends Command {
 
-    constructor(args) {
+    constructor(actorId) {
         super('select-card');
-        console.log(args);
+        this.data = {
+            actorId: actorId || 0
+        };
     }
 
     doAction(store, command) {
         let data = command.data;
-        console.log('select-card command called');
         let actor = store.actors[data.actorId];
         actor.selectedCardIndex = data.cardIndex;
         return 'ok'

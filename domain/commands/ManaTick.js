@@ -4,15 +4,11 @@ const Command = require("../../main/Command");
 
 module.exports = class ManaTick extends Command {
 
-    constructor(args) {
+    constructor() {
         super('mana-tick');
-        console.log(args);
     }
 
     doAction(store, command) {
-        let data = command.data;
-        console.log('mana-tick command called');
-        console.log("mana-tick");
         store.actors.forEach(function(actor){
             if(actor.maxMana < 10){
                 actor.maxMana++;
@@ -21,10 +17,10 @@ module.exports = class ManaTick extends Command {
                 actor.mana++;
             }
             if(actor.deck.length <= 0 && actor.cards.length === 0 && actor.isActive){
+                // bleeding out damage
                 actor.health--;
             }
         });
-        this.gameEnded(this.store)
         return 'ok'
     }
 };

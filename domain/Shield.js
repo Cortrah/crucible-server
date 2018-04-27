@@ -1,10 +1,10 @@
 class Shield {
 
-    constructor(sourceActor, targetActor, card, upTime) {
+    constructor(sourceActor, targetActor, cardValue, upTime) {
 
         this.sourceActor = sourceActor;
         this.targetActor = sourceActor;
-        this.card = card;
+        this.cardValue = cardValue;
         this.upTime = upTime;
     }
 }

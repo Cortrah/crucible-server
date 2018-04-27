@@ -1,10 +1,10 @@
 class Mistle {
 
-    constructor(sourceActor, targetActor, card, flightTime) {
+    constructor(sourceActor, targetActor, cardValue, flightTime) {
 
         this.sourceActor = sourceActor;
         this.targetActor = sourceActor;
-        this.card = card;
+        this.cardValue = cardValue;
         this.flightTime = flightTime;
     }
 }
