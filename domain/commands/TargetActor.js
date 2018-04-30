@@ -7,7 +7,7 @@ module.exports = class TargetActor extends Command {
     constructor(sourceId, targetId, cardIndex) {
         super('target-actor');
         this.data = {
-            sourceId: actorId || 0,
+            sourceId: sourceId || 0,
             targetId: targetId || 0,
             cardIndex: cardIndex || 0,
         };

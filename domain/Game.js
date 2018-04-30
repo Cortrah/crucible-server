@@ -62,7 +62,8 @@ module.exports = class Game {
 
         // init actors
         for (let i = 0; i < this.store.actorCount; i++) {
-            let avatarImg =  this.randomRobotImg();
+            const randomIndex = Math.round(Math.random() * 4);
+            let avatarImg = '../static/robot' + randomIndex + '.png';
             let team = "Bad Guys";
             if (i >= this.store.actorCount / 2) {
                 team = 'Good Guys';
@@ -95,10 +96,5 @@ module.exports = class Game {
 
     beforeDestroy(){
         clearInterval(this.store.gameIntervalId);
-    }
-
-    static randomRobotImg(){
-        const randomIndex = Math.round(Math.random() * 4);
-        return '../static/robot' + randomIndex + '.png';
     }
 };

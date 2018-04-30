@@ -30,6 +30,7 @@ module.exports = class Actor {
     constructor(index, bus, options) {
 
         // required
+        this.id = index; // temporarily
         this.index = index;
         this.bus = bus;
 
