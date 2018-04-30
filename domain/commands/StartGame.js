@@ -10,8 +10,7 @@ module.exports = class StartGame extends Command {
     }
 
     doAction(store, command) {
-        let data = command.data;
-        store.gameIntervalId = setInterval(this.gameTick, this.store.rules.gameTickInterval);
+        store.gameIntervalId = setInterval(this.gameTick, store.rules.gameTickInterval);
 
         // shuffle each actors deck
         store.actors.forEach(function(actor){

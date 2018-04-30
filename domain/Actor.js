@@ -53,7 +53,9 @@ module.exports = class Actor {
         } else {
             Object.assign(this, defaults);
         }
+    }
 
+    created(){
         this.bus.addEventListener('game-tick', function(command) {
             this.gameTick(command)
         });

@@ -11,7 +11,6 @@ describe('Actor', () => {
     it('Has expected default values', () => {
 
         const defaultActor = new Actor();
-
         expect(defaultActor).to.exist();
     });
 });

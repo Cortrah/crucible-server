@@ -73,6 +73,7 @@ module.exports = class Game {
             newActor.bus = this.bus;
             newActor.team = team;
             newActor.avatarImg = avatarImg;
+            newActor.created();
             this.store.actors.push(newActor);
         }
         this.created();
@@ -85,7 +86,11 @@ module.exports = class Game {
                 command.doAction(this.store, command);
             });
         });
-        new StartGame().dispatch(this.bus, this.store);
+        console.log('created');
+        console.log(this.bus);
+        console.log(this.store);
+        console.log(commands[0].name);
+        commands[0].dispatch(this.bus, this.store);
     }
 
     beforeDestroy(){
