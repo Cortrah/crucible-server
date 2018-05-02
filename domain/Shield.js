@@ -1,4 +1,6 @@
-class Shield {
+'use strict';
+
+module.exports = class Shield {
 
     constructor(sourceActor, targetActor, cardValue, upTime) {
 
@@ -7,6 +9,4 @@ class Shield {
         this.cardValue = cardValue;
         this.upTime = upTime;
     }
-}
-
-module.exports = Shield;
+};

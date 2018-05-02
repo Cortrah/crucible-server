@@ -1,6 +1,6 @@
 'use strict';
 
-const Uuid = require('uuid');
+const UUID = require('uuid');
 const Bus = require('../main/Bus');
 const Actor = require('./Actor');
 
@@ -18,7 +18,7 @@ const EndGame = require('./commands/EndGame');
 module.exports = class Game {
 
     constructor(options) {
-        this.id = Uuid.v4();
+        this.id = UUID.v4();
         this.bus = new Bus();
 
         this.store = {
@@ -71,7 +71,7 @@ module.exports = class Game {
             // ToDo: figure out why require constructor doesn't get arguments
             let newActor = new Actor();
             newActor.index = i;
-            newActor.bus = this.bus;
+            //newActor.bus = this.bus;
             newActor.team = team;
             newActor.avatarImg = avatarImg;
             newActor.created();

@@ -11,6 +11,6 @@ module.exports = class Command {
     dispatch(bus, store) {
         this.bus = bus;
         this.store = store;
-        bus.dispatchEvent(this.name, store);
+        this.bus.dispatchEvent(this.name, store);
     }
 };

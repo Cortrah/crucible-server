@@ -8,9 +8,9 @@ const Game = require('../../domain/Game.js');
 
 describe('Game', () => {
 
-    it('Has expected default values', async () => {
+    it('Has expected default values', () => {
 
-        const defaultGame = await new Game();
+        const defaultGame = new Game();
         expect(defaultGame).to.exist();
     });
 });

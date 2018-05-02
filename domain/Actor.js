@@ -1,11 +1,15 @@
 'use strict';
 
+const UUID = require('uuid');
+const Bus = require('../main/Bus');
+
 const DrawMistle = require('./commands/DrawMistle');
 const DrawShield = require('./commands/DrawShield');
 const SelectCard = require('./commands/SelectCard');
 const TargetActor = require('./commands/TargetActor');
 
 const defaults = {
+    id: null,
     index:0,
     name:'?',
     team:'Bad Guys',
@@ -29,8 +33,9 @@ module.exports = class Actor {
 
     constructor(index, bus, options) {
 
+        this.id = UUID.v4();
+
         // required
-        this.id = index; // temporarily
         this.index = index;
         this.bus = bus;
 
@@ -57,6 +62,9 @@ module.exports = class Actor {
     }
 
     created(){
+        if(typeof this.bus == 'undefined'){
+            this.bus = new Bus();
+        }
         this.bus.addEventListener('game-tick', function(command) {
             this.gameTick(command)
         });

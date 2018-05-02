@@ -1,4 +1,6 @@
-class Mistle {
+'use strict';
+
+module.exports = class Mistle {
 
     constructor(sourceActor, targetActor, cardValue, flightTime) {
 
@@ -7,6 +9,4 @@ class Mistle {
         this.cardValue = cardValue;
         this.flightTime = flightTime;
     }
-}
-
-module.exports = Mistle;
+};
