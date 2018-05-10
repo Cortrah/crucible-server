@@ -61,20 +61,19 @@ module.exports = class Game {
         ];
 
         // init actors
-        for (let i = 0; i < this.store.actorCount; i++) {
+        for (let index = 0; index < this.store.actorCount; index++) {
             const randomIndex = Math.round(Math.random() * 4);
             let avatarImg = '../static/robot' + randomIndex + '.png';
             let team = "Bad Guys";
-            if (i >= this.store.actorCount / 2) {
+            if (index >= this.store.actorCount / 2) {
                 team = 'Good Guys';
             }
+            let options = {
+                team: team,
+                avatarImg: avatarImg,
+            };
             // ToDo: figure out why require constructor doesn't get arguments
-            let newActor = new Actor();
-            newActor.index = i;
-            //newActor.bus = this.bus;
-            newActor.team = team;
-            newActor.avatarImg = avatarImg;
-            newActor.created();
+            let newActor = new Actor(index, this.bus, options);
             this.store.actors.push(newActor);
         }
         this.created();
@@ -87,10 +86,6 @@ module.exports = class Game {
                 command.doAction(this.store, command);
             });
         });
-        console.log('created');
-        console.log(this.bus);
-        console.log(this.store);
-        console.log(commands[0].name);
         commands[0].dispatch(this.bus, this.store);
     }
 

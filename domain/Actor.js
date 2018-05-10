@@ -32,6 +32,9 @@ const defaults = {
 module.exports = class Actor {
 
     constructor(index, bus, options) {
+        console.log(index);
+        console.log(bus);
+        console.log(options);
 
         this.id = UUID.v4();
 
@@ -62,9 +65,6 @@ module.exports = class Actor {
     }
 
     created(){
-        if(typeof this.bus == 'undefined'){
-            this.bus = new Bus();
-        }
         this.bus.addEventListener('game-tick', function(command) {
             this.gameTick(command)
         });
