@@ -32,9 +32,6 @@ const defaults = {
 module.exports = class Actor {
 
     constructor(index, bus, options) {
-        console.log(index);
-        console.log(bus);
-        console.log(options);
 
         this.id = UUID.v4();
 
@@ -54,7 +51,7 @@ module.exports = class Actor {
             this.shields = options.shields || [];
             this.cards = options.cards || [];
             this.selectedCardIndex = options.selectedCardIndex || defaults.selectedCardIndex;
-            this.deck = options.deck || Object.assign(this.deck, defaults.deck);
+            this.deck = options.deck ? Object.assign({}, options.deck) : Object.assign({}, defaults.deck);
             this.deckSize = options.deckSize || defaults.deckSize;
             this.drawEnabled = options.drawEnabled || defaults.drawEnabled;
             this.isbleedingOut = options.isbleedingOut || defaults.isbleedingOut;

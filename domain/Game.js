@@ -68,25 +68,26 @@ module.exports = class Game {
             if (index >= this.store.actorCount / 2) {
                 team = 'Good Guys';
             }
-            let options = {
+            let actorOptions = {
                 team: team,
                 avatarImg: avatarImg,
             };
             // ToDo: figure out why require constructor doesn't get arguments
-            let newActor = new Actor(index, this.bus, options);
+            let newActor = new Actor(index, this.bus, actorOptions);
             this.store.actors.push(newActor);
         }
         this.created();
     }
 
     created(){
+        const _scope = this;
         this.commands.forEach(command => {
             this.bus.registerEvent(command.name);
             this.bus.addEventListener(command.name, function(command) {
-                command.doAction(this.store, command);
+                //command.doAction(_scope.store, command);
             });
         });
-        commands[0].dispatch(this.bus, this.store);
+        this.commands[0].dispatch(this.bus, this.store);
     }
 
     beforeDestroy(){

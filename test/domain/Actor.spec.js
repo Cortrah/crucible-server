@@ -10,7 +10,7 @@ describe('Actor', () => {
 
     it('Has expected default values', () => {
 
-        const defaultActor = new Actor();
+        let defaultActor = new Actor(1,"bus", {});
         expect(defaultActor).to.exist();
     });
 });
