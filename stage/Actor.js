@@ -1,7 +1,6 @@
 'use strict';
 
 const UUID = require('uuid');
-const Bus = require('../main/Bus');
 
 const DrawMistle = require('./commands/DrawMistle');
 const DrawShield = require('./commands/DrawShield');
@@ -62,7 +61,7 @@ module.exports = class Actor {
     }
 
     created(){
-        this.bus.addEventListener('game-tick', function(command) {
+        this.bus.addEventListener('game-tick', (command) => {
             this.gameTick(command)
         });
     }

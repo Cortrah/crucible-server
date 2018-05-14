@@ -4,7 +4,7 @@ const Lab = require('lab');
 const { describe, it } = exports.lab = Lab.script();
 const { expect } = Code;
 
-const Actor = require('../../domain/Actor.js');
+const Actor = require('../../stage/Actor.js');
 
 describe('Actor', () => {
 

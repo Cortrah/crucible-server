@@ -5,7 +5,7 @@ const { describe, it } = exports.lab = Lab.script();
 const { expect } = Code;
 
 const Command = require('../../main/Command');
-const StartGame = require('../../domain/commands/StartGame');
+const StartGame = require('../../stage/commands/StartGame');
 
 describe('Command', () => {
 

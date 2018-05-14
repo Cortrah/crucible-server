@@ -10,8 +10,10 @@ module.exports = class StartGame extends Command {
     }
 
     doAction(store, command) {
+        console.log(store)
+        console.log(command)
 
-        if(typeof store != 'undefined'){
+        if(typeof store !== 'undefined'){
             store.gameIntervalId = setInterval(this.gameTick, store.rules.gameTickInterval);
 
             // shuffle each actors deck
